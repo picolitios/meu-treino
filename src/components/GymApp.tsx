@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Alert,
   KeyboardAvoidingView,
@@ -11,10 +11,11 @@ import {
   TextInput,
   View,
 } from "react-native";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { router } from "expo-router";
 import { getLocales } from "expo-localization";
 import type { SQLiteDatabase } from "expo-sqlite";
-import { matchesSearch, parseCount, type Category } from "./src/catalog";
+import { matchesSearch, parseCount, type Category } from "../catalog";
 import {
   addWorkoutItem,
   createEquipment,
@@ -34,13 +35,13 @@ import {
   type Exercise,
   type Workout,
   type WorkoutItem,
-} from "./src/database";
-import { translate, type Language } from "./src/i18n";
-import { s } from "./src/styles";
+} from "../database";
+import { translate, type Language } from "../i18n";
+import { s } from "../styles";
 
 type Tab = "plan" | "gym" | "settings";
 type Dialog = "pick" | "equipment" | "edit" | null;
-const categories: Array<Category | "all"> = [
+const categories: (Category | "all")[] = [
   "all",
   "strength",
   "free",
@@ -50,7 +51,7 @@ const categories: Array<Category | "all"> = [
 ];
 
 // Coordena os treinos e equipamentos persistidos no banco local.
-function GymApp() {
+export function GymApp({ tab }: { tab: Tab }) {
   const [db, setDb] = useState<SQLiteDatabase | null>(null);
   const [loadError, setLoadError] = useState(false);
   const [retryToken, setRetryToken] = useState(0);
@@ -58,8 +59,8 @@ function GymApp() {
     getLocales()[0]?.languageCode === "en" ? "en" : "pt",
   );
   const t = translate(language);
-  const [tab, setTab] = useState<Tab>("plan");
   const [day, setDay] = useState(new Date().getDay());
+  const initialDay = useRef(day);
   const [equipment, setEquipment] = useState<Equipment[]>([]);
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [workouts, setWorkouts] = useState<Workout[]>([]);
@@ -76,6 +77,7 @@ function GymApp() {
   const [repsDraft, setRepsDraft] = useState("12");
   const [busy, setBusy] = useState(false);
   const workout = workouts.find((entry) => entry.day === day);
+  const workoutId = workout?.id;
   const owned = useMemo(
     () =>
       new Set(
@@ -98,6 +100,7 @@ function GymApp() {
       setExercises(nextExercises);
       setWorkouts(nextWorkouts);
       const selected = nextWorkouts.find((entry) => entry.day === selectedDay);
+      setNameDraft(selected?.name ?? "");
       setItems(selected ? await listWorkoutItems(database, selected.id) : []);
     },
     [],
@@ -106,14 +109,13 @@ function GymApp() {
   // Abre o SQLite e restaura a preferência de idioma na primeira renderização.
   useEffect(() => {
     let active = true;
-    setLoadError(false);
     openGymDatabase()
       .then(async (database) => {
         if (!active) return;
         const saved = await readLanguage(database);
         if (saved && active) setLanguage(saved);
         if (active) {
-          await refresh(database, day);
+          await refresh(database, initialDay.current);
           setDb(database);
         }
       })
@@ -123,19 +125,15 @@ function GymApp() {
     return () => {
       active = false;
     };
-  }, [retryToken]);
+  }, [retryToken, refresh]);
 
   useEffect(() => {
     if (!db) return;
-    const selected = workouts.find((entry) => entry.day === day);
-    if (selected)
-      listWorkoutItems(db, selected.id)
+    if (workoutId)
+      listWorkoutItems(db, workoutId)
         .then(setItems)
         .catch(() => Alert.alert(t.app, t.error));
-  }, [day, db]);
-  useEffect(() => {
-    setNameDraft(workout?.name ?? "");
-  }, [workout?.id, workout?.name]);
+  }, [day, db, workoutId, t.app, t.error]);
 
   // Serializa as edições e apresenta falhas de persistência ao usuário.
   const mutate = async (action: () => Promise<void>, after?: () => void) => {
@@ -248,7 +246,10 @@ function GymApp() {
         {loadError && (
           <Pressable
             style={s.primary}
-            onPress={() => setRetryToken((value) => value + 1)}
+            onPress={() => {
+              setLoadError(false);
+              setRetryToken((value) => value + 1);
+            }}
           >
             <Text style={s.primaryText}>{t.retry}</Text>
           </Pressable>
@@ -282,7 +283,13 @@ function GymApp() {
               {t.days.map((value, index) => (
                 <Pressable
                   key={index}
-                  onPress={() => setDay(index)}
+                  onPress={() => {
+                    setDay(index);
+                    setNameDraft(
+                      workouts.find((entry) => entry.day === index)?.name ?? "",
+                    );
+                    setItems([]);
+                  }}
                   style={[s.day, day === index && s.dayActive]}
                   accessibilityRole="button"
                   accessibilityState={{ selected: day === index }}
@@ -512,7 +519,16 @@ function GymApp() {
           <Pressable
             key={value}
             style={s.tab}
-            onPress={() => setTab(value)}
+            onPress={() => {
+              if (value !== tab)
+                router.replace(
+                  value === "plan"
+                    ? "/"
+                    : value === "gym"
+                      ? "/gym"
+                      : "/settings",
+                );
+            }}
             accessibilityRole="tab"
             accessibilityState={{ selected: tab === value }}
           >
@@ -678,13 +694,5 @@ function GymApp() {
         </KeyboardAvoidingView>
       </Modal>
     </SafeAreaView>
-  );
-}
-
-export default function App() {
-  return (
-    <SafeAreaProvider>
-      <GymApp />
-    </SafeAreaProvider>
   );
 }

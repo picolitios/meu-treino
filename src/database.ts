@@ -28,8 +28,21 @@ export type WorkoutItem = {
   position: number;
 };
 
+let databasePromise: Promise<SQLiteDatabase> | null = null;
+
+// Compartilha uma conexão entre telas e permite nova tentativa após falha.
+export function openGymDatabase(): Promise<SQLiteDatabase> {
+  if (!databasePromise) {
+    databasePromise = initializeGymDatabase().catch((error) => {
+      databasePromise = null;
+      throw error;
+    });
+  }
+  return databasePromise;
+}
+
 // Cria o banco local e popula o catálogo apenas na primeira abertura.
-export async function openGymDatabase(): Promise<SQLiteDatabase> {
+async function initializeGymDatabase(): Promise<SQLiteDatabase> {
   const db = await openDatabaseAsync("gym.db");
   await db.execAsync("PRAGMA foreign_keys = ON");
   const version = await db.getFirstAsync<{ user_version: number }>(

@@ -18,6 +18,7 @@ Abra o QR code com o Expo Go. Para usar emulador Android configurado, execute `n
 ```bash
 npm run typecheck
 npm test
+npm run lint
 npx expo-doctor
 ```
 
