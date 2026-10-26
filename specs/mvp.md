@@ -1,0 +1,19 @@
+# MVP — Meus equipamentos e treinos
+
+## Objetivo
+
+App Android e iOS, utilizável sem conta ou conexão, para registrar os equipamentos disponíveis em uma academia e montar treinos por dia da semana.
+
+## Requisitos e critérios de aceitação
+
+- O catálogo inicial cobre as famílias comuns de máquinas, pesos livres, cabos, cardio e acessórios. Cada item tem nome em português e inglês. Como academias podem ter aparelhos próprios ou nomes regionais, o usuário pode cadastrar equipamentos ausentes.
+- A busca filtra conforme a digitação, ignora acentos e considera os nomes nos dois idiomas.
+- É possível marcar e desmarcar equipamentos da academia; essa seleção persiste após reiniciar o app.
+- Cada dia da semana tem um treino editável: nome próprio, lista ordenada de exercícios, séries e repetições por exercício.
+- É possível adicionar exercícios do catálogo, criar um exercício com nome próprio e excluir exercícios de um treino.
+- Os dados do usuário persistem em SQLite local. Exclusões de exercícios do treino não apagam o catálogo.
+- A interface segue o idioma do aparelho (português ou inglês) na primeira abertura e permite alterná-lo dentro do app.
+
+## Fora do MVP
+
+Conta, sincronização entre aparelhos, planos gerados automaticamente, registro de cargas/histórico e publicação nas lojas.

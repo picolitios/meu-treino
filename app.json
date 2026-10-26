@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "gym",
-    "slug": "gym",
+    "name": "Meu Treino",
+    "slug": "meu-treino",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -20,6 +20,10 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      "expo-sqlite",
+      "expo-localization"
+    ]
   }
 }
