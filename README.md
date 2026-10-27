@@ -25,3 +25,7 @@ npx expo-doctor
 ## Dados e escopo
 
 O catálogo inicial inclui aparelhos comuns de musculação, pesos livres, cabos, cardio e acessórios, com nomes em português e inglês. Equipamentos e exercícios ausentes podem ser criados no app. Os treinos, os aparelhos marcados e o idioma escolhido ficam somente no dispositivo; não há conta nem sincronização. A [spec do MVP](specs/mvp.md) descreve os critérios de aceitação.
+
+## Identidade visual
+
+As cores da interface ficam em `src/theme.ts`. Os ícones roxos e o splash estão em `assets/`; para recriá-los no Windows, execute `scripts/generate-brand-assets.ps1` no PowerShell. Os PNGs gerados já estão versionados e são usados diretamente pelos builds Android e iOS.

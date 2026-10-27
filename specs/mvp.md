@@ -13,6 +13,7 @@ App Android e iOS, utilizável sem conta ou conexão, para registrar os equipame
 - É possível adicionar exercícios do catálogo, criar um exercício com nome próprio e excluir exercícios de um treino.
 - Os dados do usuário persistem em SQLite local. Exclusões de exercícios do treino não apagam o catálogo.
 - A interface segue o idioma do aparelho (português ou inglês) na primeira abertura e permite alterná-lo dentro do app.
+- A identidade visual usa roxo profundo, violeta e lavanda de modo consistente nas telas, nos estados ativos e nos ícones do aplicativo, preservando legibilidade.
 
 ## Fora do MVP
 
