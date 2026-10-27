@@ -90,7 +90,14 @@ export const s = StyleSheet.create({
     marginTop: 6,
     marginBottom: 24,
   },
-  dayScroll: { flexGrow: 0, marginTop: 18, marginBottom: 22 },
+  // Reserva a altura inteira dos cartões no Android, sem cortá-los no ScrollView horizontal.
+  dayScroll: {
+    flexGrow: 0,
+    flexShrink: 0,
+    height: 67,
+    marginTop: 18,
+    marginBottom: 22,
+  },
   dayRow: { paddingHorizontal: 24, gap: 8 },
   day: {
     width: 64,
