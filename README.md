@@ -40,8 +40,7 @@ Os 67 GIFs em `assets/exercise-gifs/` foram montados com quatro quadros da mesma
 
 O perfil `preview` em `eas.json` gera um APK Android que funciona sem Expo Go ou servidor de desenvolvimento. Requer uma conta Expo autenticada:
 
-- [Baixar o APK Android 1.0.0](https://expo.dev/artifacts/eas/NPI7lyODyX5fHgkSf4HRqgO3JaJiPAqcKiwg2EYZQUU.apk) (build de teste disponível até 10/11/2026).
-- [Consultar o build na Expo](https://expo.dev/accounts/picolitios/projects/meu-treino/builds/092d2f99-4ce3-4685-96bf-2a18b2548599).
+- [Baixar a versão atualizada na Expo](https://expo.dev/accounts/picolitios/projects/meu-treino/builds/15093d71-27cf-4b4d-94fe-d11512ac9c19) (build Android do commit `1c907ee`; o botão de download aparece quando a geração terminar).
 
 Para gerar um novo link quando o atual expirar:
 
