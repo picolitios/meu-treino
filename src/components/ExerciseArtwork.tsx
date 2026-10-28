@@ -242,15 +242,23 @@ export function EquipmentArtwork({
   nameEn,
   custom,
   size = 64,
+  onPress,
+  accessibilityLabel,
 }: {
   nameEn: string;
   custom: boolean;
   size?: number;
+  onPress?: (exerciseNameEn: string) => void;
+  accessibilityLabel?: string;
 }) {
+  const exerciseNameEn = custom ? "" : (exerciseByEquipment.get(nameEn) ?? "");
+
   return (
     <ExerciseArtwork
-      nameEn={custom ? "" : (exerciseByEquipment.get(nameEn) ?? "")}
+      nameEn={exerciseNameEn}
       size={size}
+      onPress={onPress ? () => onPress(exerciseNameEn) : undefined}
+      accessibilityLabel={accessibilityLabel}
     />
   );
 }

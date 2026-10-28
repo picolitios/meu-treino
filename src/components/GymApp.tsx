@@ -568,6 +568,20 @@ export function GymApp({ tab }: { tab: Tab }) {
                   nameEn={entry.name_en}
                   custom={Boolean(entry.custom)}
                   size={64}
+                  onPress={
+                    tab === "catalog"
+                      ? (exerciseNameEn) => {
+                          const exercise = exercises.find(
+                            (candidate) => candidate.name_en === exerciseNameEn,
+                          );
+                          openPreview(
+                            exerciseNameEn,
+                            exercise ? label(exercise) : label(entry),
+                          );
+                        }
+                      : undefined
+                  }
+                  accessibilityLabel={`${t.viewExerciseDemo} ${label(entry)}`}
                 />
                 <View style={s.flex}>
                   <Text style={s.itemName}>{label(entry)}</Text>
