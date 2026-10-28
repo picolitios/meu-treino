@@ -40,7 +40,7 @@ Ao tocar na imagem de um exercício no treino ou na lista de escolha, ou na imag
 
 O perfil `preview` em `eas.json` gera um APK Android que funciona sem Expo Go ou servidor de desenvolvimento. Requer uma conta Expo autenticada:
 
-- [Baixar a versão com GIFs de demonstração na Expo](https://expo.dev/accounts/picolitios/projects/meu-treino/builds/67d6d9d4-d437-4451-a042-d87901bcfa9a) (build Android do commit `d451b57`; o botão de download aparece quando a geração terminar).
+- [Baixar a versão com GIFs também no Catálogo na Expo](https://expo.dev/accounts/picolitios/projects/meu-treino/builds/71c0fa3e-d82a-462c-8a02-8e06cf6099c8) (build Android do commit `7208b81`; o botão de download aparece quando a geração terminar).
 
 Para gerar um novo link quando o atual expirar:
 
