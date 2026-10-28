@@ -40,7 +40,7 @@ Ao tocar na imagem de um exercício no treino ou na lista de escolha, o app abre
 
 O perfil `preview` em `eas.json` gera um APK Android que funciona sem Expo Go ou servidor de desenvolvimento. Requer uma conta Expo autenticada:
 
-- [Baixar a versão com catálogo e Minha academia separados na Expo](https://expo.dev/accounts/picolitios/projects/meu-treino/builds/383a628e-4a5a-4d25-9e0d-1102abfe23c5) (build Android do commit `857fbc0`; o botão de download aparece quando a geração terminar).
+- [Baixar a versão com GIFs de demonstração na Expo](https://expo.dev/accounts/picolitios/projects/meu-treino/builds/67d6d9d4-d437-4451-a042-d87901bcfa9a) (build Android do commit `d451b57`; o botão de download aparece quando a geração terminar).
 
 Para gerar um novo link quando o atual expirar:
 
