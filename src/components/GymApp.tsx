@@ -11,8 +11,12 @@ import {
   TextInput,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { router } from "expo-router";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
+import { Link, router } from "expo-router";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { getLocales } from "expo-localization";
 import type { SQLiteDatabase } from "expo-sqlite";
 import { matchesSearch, parseCount, type Category } from "../catalog";
@@ -38,6 +42,8 @@ import {
 } from "../database";
 import { translate, type Language } from "../i18n";
 import { s } from "../styles";
+import { colors } from "../theme";
+import { ExerciseArtwork } from "./ExerciseArtwork";
 
 type Tab = "plan" | "gym" | "settings";
 type Dialog = "pick" | "equipment" | "edit" | null;
@@ -50,8 +56,32 @@ const categories: (Category | "all")[] = [
   "accessory",
 ];
 
+// Reúne título e ornamentos para manter a mesma identidade nas três telas.
+function HeroHeading({
+  eyebrow,
+  title,
+  subtitle,
+  standalone = false,
+}: {
+  eyebrow: string;
+  title: string;
+  subtitle: string;
+  standalone?: boolean;
+}) {
+  return (
+    <View style={[s.heading, standalone && s.standaloneHeading]}>
+      <View style={s.heroOrb} pointerEvents="none" />
+      <View style={s.heroRing} pointerEvents="none" />
+      <Text style={[s.kicker, s.heroKicker]}>{eyebrow}</Text>
+      <Text style={s.title}>{title}</Text>
+      <Text style={[s.subtitle, s.heroSubtitle]}>{subtitle}</Text>
+    </View>
+  );
+}
+
 // Coordena os treinos e equipamentos persistidos no banco local.
 export function GymApp({ tab }: { tab: Tab }) {
+  const insets = useSafeAreaInsets();
   const [db, setDb] = useState<SQLiteDatabase | null>(null);
   const [loadError, setLoadError] = useState(false);
   const [retryToken, setRetryToken] = useState(0);
@@ -242,6 +272,7 @@ export function GymApp({ tab }: { tab: Tab }) {
   if (!db)
     return (
       <SafeAreaView style={[s.safe, s.loading]} edges={["top", "bottom"]}>
+        <StatusBar barStyle="dark-content" />
         <Text style={s.emptyTitle}>{loadError ? t.loadError : t.loading}</Text>
         {loadError && (
           <Pressable
@@ -258,22 +289,27 @@ export function GymApp({ tab }: { tab: Tab }) {
     );
 
   return (
-    <SafeAreaView style={s.safe} edges={["top", "bottom"]}>
-      <StatusBar barStyle="dark-content" />
+    <SafeAreaView style={s.safe} edges={["top", "left", "right"]}>
+      <StatusBar barStyle="light-content" />
       <View style={s.header}>
         <View style={s.logo}>
-          <Text style={s.logoText}>G</Text>
+          <MaterialCommunityIcons
+            name="dumbbell"
+            size={21}
+            color={colors.primaryDark}
+          />
         </View>
         <Text style={s.brand}>{t.app}</Text>
       </View>
       <View style={s.main}>
         {tab === "plan" && (
           <>
-            <View style={s.heading}>
-              <Text style={s.kicker}>{t.week}</Text>
-              <Text style={s.title}>{t.plan}</Text>
-              <Text style={s.subtitle}>{t.planSubtitle}</Text>
-            </View>
+            <HeroHeading
+              eyebrow={t.week}
+              title={t.plan}
+              subtitle={t.planSubtitle}
+              standalone
+            />
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
@@ -314,11 +350,12 @@ export function GymApp({ tab }: { tab: Tab }) {
               <Text style={s.fieldLabel}>{t.workoutName}</Text>
               <View style={s.row}>
                 <TextInput
+                  selectionColor={colors.primary}
                   style={[s.input, s.flex]}
                   value={nameDraft}
                   onChangeText={setNameDraft}
                   placeholder={t.workoutPlaceholder}
-                  placeholderTextColor="#A3AAA4"
+                  placeholderTextColor={colors.placeholder}
                   maxLength={60}
                   onSubmitEditing={saveName}
                   accessibilityLabel={t.workoutName}
@@ -347,6 +384,7 @@ export function GymApp({ tab }: { tab: Tab }) {
                     <Text style={s.number}>
                       {String(index + 1).padStart(2, "0")}
                     </Text>
+                    <ExerciseArtwork nameEn={item.name_en} size={54} />
                     <Text style={[s.itemName, s.flex]}>{label(item)}</Text>
                     <Pressable
                       onPress={() => confirmRemove(item)}
@@ -396,19 +434,18 @@ export function GymApp({ tab }: { tab: Tab }) {
             contentContainerStyle={s.content}
             keyboardShouldPersistTaps="handled"
           >
-            <View style={s.heading}>
-              <Text style={s.kicker}>
-                {t.myEquipment} · {owned.size}
-              </Text>
-              <Text style={s.title}>{t.gym}</Text>
-              <Text style={s.subtitle}>{t.gymSubtitle}</Text>
-            </View>
+            <HeroHeading
+              eyebrow={`${t.myEquipment} · ${owned.size}`}
+              title={t.gym}
+              subtitle={t.gymSubtitle}
+            />
             <TextInput
+              selectionColor={colors.primary}
               style={s.input}
               value={search}
               onChangeText={setSearch}
               placeholder={`⌕  ${t.searchEquipment}`}
-              placeholderTextColor="#A3AAA4"
+              placeholderTextColor={colors.placeholder}
               accessibilityLabel={t.searchEquipment}
             />
             <ScrollView
@@ -440,7 +477,10 @@ export function GymApp({ tab }: { tab: Tab }) {
             {filteredEquipment.map((entry) => (
               <Pressable
                 key={entry.id}
-                style={s.equipmentRow}
+                style={[
+                  s.equipmentRow,
+                  Boolean(entry.owned) && s.equipmentOwned,
+                ]}
                 onPress={() =>
                   mutate(() => setEquipmentOwned(db!, entry.id, !entry.owned))
                 }
@@ -475,11 +515,11 @@ export function GymApp({ tab }: { tab: Tab }) {
         )}
         {tab === "settings" && (
           <ScrollView contentContainerStyle={s.content}>
-            <View style={s.heading}>
-              <Text style={s.kicker}>{t.app.toUpperCase()}</Text>
-              <Text style={s.title}>{t.settings}</Text>
-              <Text style={s.subtitle}>{t.settingsSubtitle}</Text>
-            </View>
+            <HeroHeading
+              eyebrow={t.app.toUpperCase()}
+              title={t.settings}
+              subtitle={t.settingsSubtitle}
+            />
             <View style={s.settingsCard}>
               <Text style={s.itemName}>{t.language}</Text>
               <Text style={s.meta}>{t.languageHint}</Text>
@@ -511,14 +551,38 @@ export function GymApp({ tab }: { tab: Tab }) {
               </View>
             </View>
             <Text style={s.offline}>{t.offline}</Text>
+            <Text style={s.artworkCredit}>{t.artworkCredit}</Text>
+            <View style={s.artworkLinks}>
+              <Link
+                href="https://github.com/bryllim/workout-guide"
+                style={s.artworkLink}
+              >
+                Workout Guide
+              </Link>
+              <Text style={s.artworkCredit}> · </Text>
+              <Link
+                href="https://creativecommons.org/licenses/by-sa/4.0/"
+                style={s.artworkLink}
+              >
+                {t.artworkLicense}
+              </Link>
+            </View>
           </ScrollView>
         )}
       </View>
-      <View style={s.tabBar}>
+      <View
+        style={[
+          s.tabBar,
+          {
+            height: 70 + insets.bottom,
+            paddingBottom: Math.max(insets.bottom, 8),
+          },
+        ]}
+      >
         {(["plan", "gym", "settings"] as Tab[]).map((value) => (
           <Pressable
             key={value}
-            style={s.tab}
+            style={[s.tab, tab === value && s.tabActive]}
             onPress={() => {
               if (value !== tab)
                 router.replace(
@@ -532,9 +596,17 @@ export function GymApp({ tab }: { tab: Tab }) {
             accessibilityRole="tab"
             accessibilityState={{ selected: tab === value }}
           >
-            <Text style={[s.tabIcon, tab === value && s.tabSelected]}>
-              {value === "plan" ? "▤" : value === "gym" ? "▥" : "⚙"}
-            </Text>
+            <MaterialCommunityIcons
+              name={
+                value === "plan"
+                  ? "calendar-week"
+                  : value === "gym"
+                    ? "dumbbell"
+                    : "cog-outline"
+              }
+              size={22}
+              color={tab === value ? colors.primary : colors.muted}
+            />
             <Text style={[s.tabLabel, tab === value && s.tabSelected]}>
               {t[value]}
             </Text>
@@ -575,6 +647,7 @@ export function GymApp({ tab }: { tab: Tab }) {
                 <>
                   <Text style={s.hint}>{t.customExerciseHint}</Text>
                   <TextInput
+                    selectionColor={colors.primary}
                     style={s.input}
                     value={customName}
                     onChangeText={setCustomName}
@@ -599,11 +672,12 @@ export function GymApp({ tab }: { tab: Tab }) {
               ) : (
                 <>
                   <TextInput
+                    selectionColor={colors.primary}
                     style={s.input}
                     value={pickerSearch}
                     onChangeText={setPickerSearch}
                     placeholder={`⌕  ${t.searchExercise}`}
-                    placeholderTextColor="#A3AAA4"
+                    placeholderTextColor={colors.placeholder}
                     accessibilityLabel={t.searchExercise}
                   />
                   <ScrollView
@@ -617,6 +691,7 @@ export function GymApp({ tab }: { tab: Tab }) {
                         onPress={() => addExercise(entry.id)}
                         disabled={busy}
                       >
+                        <ExerciseArtwork nameEn={entry.name_en} size={52} />
                         <View style={s.flex}>
                           <Text style={s.itemName}>{label(entry)}</Text>
                           {entry.equipment_id &&
@@ -642,6 +717,7 @@ export function GymApp({ tab }: { tab: Tab }) {
             {dialog === "equipment" && (
               <>
                 <TextInput
+                  selectionColor={colors.primary}
                   style={s.input}
                   value={customName}
                   onChangeText={setCustomName}
@@ -665,6 +741,7 @@ export function GymApp({ tab }: { tab: Tab }) {
                   <View style={s.flex}>
                     <Text style={s.fieldLabel}>{t.sets}</Text>
                     <TextInput
+                      selectionColor={colors.primary}
                       style={s.input}
                       value={setsDraft}
                       onChangeText={setSetsDraft}
@@ -676,6 +753,7 @@ export function GymApp({ tab }: { tab: Tab }) {
                   <View style={s.flex}>
                     <Text style={s.fieldLabel}>{t.reps}</Text>
                     <TextInput
+                      selectionColor={colors.primary}
                       style={s.input}
                       value={repsDraft}
                       onChangeText={setRepsDraft}
