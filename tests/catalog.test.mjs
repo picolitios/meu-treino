@@ -1,6 +1,11 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { catalog, matchesSearch, parseCount } from "../src/catalog.ts";
+import {
+  catalog,
+  filterEquipment,
+  matchesSearch,
+  parseCount,
+} from "../src/catalog.ts";
 
 test("o catálogo tem nomes bilíngues e cobre as categorias principais", () => {
   assert.ok(catalog.length >= 80);
@@ -30,6 +35,27 @@ test("a busca é incremental, bilíngue e ignora acentos", () => {
     matchesSearch("esteira", "Bicicleta ergométrica", "Exercise bike"),
     false,
   );
+});
+
+test("o inventário mostra apenas aparelhos marcados e o catálogo mostra todos", () => {
+  const equipment = [
+    {
+      category: "cardio",
+      name_pt: "Esteira",
+      name_en: "Treadmill",
+      owned: 1,
+    },
+    {
+      category: "cardio",
+      name_pt: "Bicicleta",
+      name_en: "Exercise bike",
+      owned: 0,
+    },
+  ];
+  assert.equal(filterEquipment(equipment, "", "all", false).length, 2);
+  assert.deepEqual(filterEquipment(equipment, "trea", "all", true), [equipment[0]]);
+  assert.deepEqual(filterEquipment(equipment, "", "cardio", true), [equipment[0]]);
+  assert.deepEqual(filterEquipment(equipment, "", "strength", false), []);
 });
 
 test("séries e repetições aceitam somente inteiros dentro dos limites", () => {

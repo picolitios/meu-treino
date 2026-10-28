@@ -19,7 +19,12 @@ import { Link, router } from "expo-router";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { getLocales } from "expo-localization";
 import type { SQLiteDatabase } from "expo-sqlite";
-import { matchesSearch, parseCount, type Category } from "../catalog";
+import {
+  filterEquipment,
+  matchesSearch,
+  parseCount,
+  type Category,
+} from "../catalog";
 import {
   addWorkoutItem,
   createEquipment,
@@ -45,7 +50,7 @@ import { s } from "../styles";
 import { colors } from "../theme";
 import { EquipmentArtwork, ExerciseArtwork } from "./ExerciseArtwork";
 
-type Tab = "plan" | "gym" | "settings";
+type Tab = "plan" | "catalog" | "gym" | "settings";
 type Dialog = "pick" | "equipment" | "edit" | null;
 const categories: (Category | "all")[] = [
   "all",
@@ -56,7 +61,7 @@ const categories: (Category | "all")[] = [
   "accessory",
 ];
 
-// Reúne título e ornamentos para manter a mesma identidade nas três telas.
+// Reúne título e ornamentos para manter a mesma identidade nas quatro telas.
 function HeroHeading({
   eyebrow,
   title,
@@ -98,8 +103,10 @@ export function GymApp({ tab }: { tab: Tab }) {
   const [nameDraft, setNameDraft] = useState("");
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState<Category | "all">("all");
+  const [editingGym, setEditingGym] = useState(false);
   const [dialog, setDialog] = useState<Dialog>(null);
   const [pickerSearch, setPickerSearch] = useState("");
+  const [onlyMyGym, setOnlyMyGym] = useState(false);
   const [customName, setCustomName] = useState("");
   const [customExercise, setCustomExercise] = useState(false);
   const [editing, setEditing] = useState<WorkoutItem | null>(null);
@@ -180,19 +187,24 @@ export function GymApp({ tab }: { tab: Tab }) {
     }
   };
 
-  const filteredEquipment = equipment
-    .filter(
-      (entry) =>
-        (category === "all" || entry.category === category) &&
-        matchesSearch(search, entry.name_pt, entry.name_en),
-    )
+  const filteredEquipment = filterEquipment(
+    equipment,
+    search,
+    category,
+    tab === "gym" && !editingGym,
+  )
     .sort(
       (a, b) =>
-        Number(b.owned) - Number(a.owned) || label(a).localeCompare(label(b)),
+        (tab === "gym" && editingGym
+          ? 0
+          : Number(b.owned) - Number(a.owned)) || label(a).localeCompare(label(b)),
     );
   const filteredExercises = exercises
-    .filter((entry) =>
-      matchesSearch(pickerSearch, entry.name_pt, entry.name_en),
+    .filter(
+      (entry) =>
+        matchesSearch(pickerSearch, entry.name_pt, entry.name_en) &&
+        (!onlyMyGym ||
+          (entry.equipment_id !== null && owned.has(entry.equipment_id))),
     )
     .sort(
       (a, b) =>
@@ -429,19 +441,39 @@ export function GymApp({ tab }: { tab: Tab }) {
             </ScrollView>
           </>
         )}
-        {tab === "gym" && (
+        {(tab === "catalog" || tab === "gym") && (
           <ScrollView
             contentContainerStyle={s.content}
             keyboardShouldPersistTaps="handled"
           >
             <HeroHeading
-              eyebrow={`${t.myEquipment} · ${owned.size}`}
-              title={t.gym}
-              subtitle={t.gymSubtitle}
+              eyebrow={`${tab === "gym" ? t.myEquipment : t.catalog} · ${tab === "gym" ? owned.size : equipment.length}`}
+              title={tab === "gym" ? t.gym : t.catalogTab}
+              subtitle={tab === "gym" ? t.gymSubtitle : t.catalogSubtitle}
             />
+            {tab === "gym" && (
+              <Pressable
+                style={s.inventoryAction}
+                onPress={() => {
+                  setEditingGym((value) => !value);
+                  setSearch("");
+                  setCategory("all");
+                }}
+                accessibilityRole="button"
+              >
+                <MaterialCommunityIcons
+                  name={editingGym ? "check" : "pencil-outline"}
+                  size={19}
+                  color={colors.primary}
+                />
+                <Text style={s.inventoryActionText}>
+                  {editingGym ? t.finishEditing : t.editEquipment}
+                </Text>
+              </Pressable>
+            )}
             <TextInput
               selectionColor={colors.primary}
-              style={s.input}
+              style={[s.input, tab === "gym" && s.inventorySearch]}
               value={search}
               onChangeText={setSearch}
               placeholder={`⌕  ${t.searchEquipment}`}
@@ -469,11 +501,19 @@ export function GymApp({ tab }: { tab: Tab }) {
               ))}
             </ScrollView>
             <Text style={[s.kicker, s.listTitle]}>
-              {t.catalog} · {filteredEquipment.length}
+              {tab === "gym" && !editingGym ? t.myEquipment : t.catalog} · {filteredEquipment.length}
             </Text>
-            {filteredEquipment.length === 0 && (
-              <Text style={s.noResults}>{t.noResults}</Text>
+            {tab === "gym" && !editingGym && owned.size === 0 && (
+              <View style={s.empty}>
+                <Text style={s.emptyIcon}>＋</Text>
+                <Text style={s.emptyTitle}>{t.emptyGym}</Text>
+                <Text style={s.subtitle}>{t.emptyGymHint}</Text>
+              </View>
             )}
+            {filteredEquipment.length === 0 &&
+              !(tab === "gym" && !editingGym && owned.size === 0) && (
+                <Text style={s.noResults}>{t.noResults}</Text>
+              )}
             {filteredEquipment.map((entry) => (
               <Pressable
                 key={entry.id}
@@ -584,7 +624,7 @@ export function GymApp({ tab }: { tab: Tab }) {
           },
         ]}
       >
-        {(["plan", "gym", "settings"] as Tab[]).map((value) => (
+        {(["plan", "catalog", "gym", "settings"] as Tab[]).map((value) => (
           <Pressable
             key={value}
             style={[s.tab, tab === value && s.tabActive]}
@@ -593,6 +633,8 @@ export function GymApp({ tab }: { tab: Tab }) {
                 router.replace(
                   value === "plan"
                     ? "/"
+                    : value === "catalog"
+                      ? "/catalog"
                     : value === "gym"
                       ? "/gym"
                       : "/settings",
@@ -605,6 +647,8 @@ export function GymApp({ tab }: { tab: Tab }) {
               name={
                 value === "plan"
                   ? "calendar-week"
+                  : value === "catalog"
+                    ? "view-grid-outline"
                   : value === "gym"
                     ? "dumbbell"
                     : "cog-outline"
@@ -613,7 +657,7 @@ export function GymApp({ tab }: { tab: Tab }) {
               color={tab === value ? colors.primary : colors.muted}
             />
             <Text style={[s.tabLabel, tab === value && s.tabSelected]}>
-              {t[value]}
+              {value === "catalog" ? t.catalogTab : t[value]}
             </Text>
           </Pressable>
         ))}
@@ -685,6 +729,16 @@ export function GymApp({ tab }: { tab: Tab }) {
                     placeholderTextColor={colors.placeholder}
                     accessibilityLabel={t.searchExercise}
                   />
+                  <Pressable
+                    style={[s.pickerFilter, onlyMyGym && s.chipActive]}
+                    onPress={() => setOnlyMyGym((value) => !value)}
+                    accessibilityRole="checkbox"
+                    accessibilityState={{ checked: onlyMyGym }}
+                  >
+                    <Text style={[s.chipText, onlyMyGym && s.chipTextActive]}>
+                      {t.onlyMyGym}
+                    </Text>
+                  </Pressable>
                   <ScrollView
                     style={s.pickerList}
                     keyboardShouldPersistTaps="handled"

@@ -522,6 +522,28 @@ export function matchesSearch(term: string, ...names: string[]): boolean {
   return names.some((name) => normalizeSearch(name).includes(normalizedTerm));
 }
 
+// Aplica a mesma busca ao catálogo e ao inventário marcado pelo usuário.
+export function filterEquipment<
+  T extends {
+    category: Category;
+    name_pt: string;
+    name_en: string;
+    owned: number;
+  },
+>(
+  entries: T[],
+  search: string,
+  category: Category | "all",
+  selectedOnly: boolean,
+): T[] {
+  return entries.filter(
+    (entry) =>
+      (!selectedOnly || Boolean(entry.owned)) &&
+      (category === "all" || entry.category === category) &&
+      matchesSearch(search, entry.name_pt, entry.name_en),
+  );
+}
+
 // Limita valores numéricos aos intervalos que a interface aceita.
 export function parseCount(
   value: string,
