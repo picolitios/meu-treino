@@ -195,6 +195,17 @@ export const s = StyleSheet.create({
     justifyContent: "center",
     overflow: "hidden",
   },
+  artworkPlayBadge: {
+    position: "absolute",
+    right: 3,
+    bottom: 3,
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    backgroundColor: colors.primary,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   number: {
     backgroundColor: colors.tint,
     color: colors.primary,
@@ -380,6 +391,24 @@ export const s = StyleSheet.create({
   sheetTitle: { color: colors.ink, fontSize: 22, fontWeight: "800" },
   close: { color: colors.muted, fontSize: 28 },
   hint: { color: colors.muted, fontSize: 13, marginBottom: 16 },
+  demoImage: {
+    width: "100%",
+    height: 300,
+    backgroundColor: colors.hero,
+    borderRadius: 16,
+  },
+  demoName: {
+    color: colors.ink,
+    fontSize: 18,
+    fontWeight: "800",
+    marginBottom: 14,
+  },
+  demoCredit: {
+    color: colors.muted,
+    fontSize: 12,
+    lineHeight: 18,
+    marginTop: 14,
+  },
   pickerList: { maxHeight: 380, marginTop: 8 },
   pickerFilter: {
     alignSelf: "flex-start",

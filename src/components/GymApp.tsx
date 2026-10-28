@@ -17,6 +17,7 @@ import {
 } from "react-native-safe-area-context";
 import { Link, router } from "expo-router";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { Image as AnimatedImage } from "expo-image";
 import { getLocales } from "expo-localization";
 import type { SQLiteDatabase } from "expo-sqlite";
 import {
@@ -48,10 +49,14 @@ import {
 import { translate, type Language } from "../i18n";
 import { s } from "../styles";
 import { colors } from "../theme";
-import { EquipmentArtwork, ExerciseArtwork } from "./ExerciseArtwork";
+import {
+  EquipmentArtwork,
+  ExerciseArtwork,
+  getExerciseAnimation,
+} from "./ExerciseArtwork";
 
 type Tab = "plan" | "catalog" | "gym" | "settings";
-type Dialog = "pick" | "equipment" | "edit" | null;
+type Dialog = "pick" | "equipment" | "edit" | "preview" | null;
 const categories: (Category | "all")[] = [
   "all",
   "strength",
@@ -105,6 +110,11 @@ export function GymApp({ tab }: { tab: Tab }) {
   const [category, setCategory] = useState<Category | "all">("all");
   const [editingGym, setEditingGym] = useState(false);
   const [dialog, setDialog] = useState<Dialog>(null);
+  const [preview, setPreview] = useState<{
+    nameEn: string;
+    title: string;
+    returnTo: Dialog;
+  } | null>(null);
   const [pickerSearch, setPickerSearch] = useState("");
   const [onlyMyGym, setOnlyMyGym] = useState(false);
   const [customName, setCustomName] = useState("");
@@ -227,6 +237,22 @@ export function GymApp({ tab }: { tab: Tab }) {
         setPickerSearch("");
       },
     );
+  };
+
+  // Abre o GIF local e lembra a lista de escolha para voltar sem perder a busca.
+  const openPreview = (nameEn: string, title: string) => {
+    if (!getExerciseAnimation(nameEn)) return;
+    setPreview({ nameEn, title, returnTo: dialog === "pick" ? "pick" : null });
+    setDialog("preview");
+  };
+
+  const closeDialog = () => {
+    if (dialog === "preview") {
+      setDialog(preview?.returnTo ?? null);
+      setPreview(null);
+    } else {
+      setDialog(null);
+    }
   };
   const addCustomExercise = () => {
     const value = customName.trim();
@@ -396,7 +422,12 @@ export function GymApp({ tab }: { tab: Tab }) {
                     <Text style={s.number}>
                       {String(index + 1).padStart(2, "0")}
                     </Text>
-                    <ExerciseArtwork nameEn={item.name_en} size={70} />
+                    <ExerciseArtwork
+                      nameEn={item.name_en}
+                      size={70}
+                      onPress={() => openPreview(item.name_en, label(item))}
+                      accessibilityLabel={`${t.viewExerciseDemo} ${label(item)}`}
+                    />
                     <Text style={[s.itemName, s.flex]}>{label(item)}</Text>
                     <Pressable
                       onPress={() => confirmRemove(item)}
@@ -666,7 +697,7 @@ export function GymApp({ tab }: { tab: Tab }) {
         visible={dialog !== null}
         transparent
         animationType="slide"
-        onRequestClose={() => setDialog(null)}
+        onRequestClose={closeDialog}
       >
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : undefined}
@@ -676,7 +707,9 @@ export function GymApp({ tab }: { tab: Tab }) {
             <View style={s.handle} />
             <View style={s.sheetHead}>
               <Text style={s.sheetTitle}>
-                {dialog === "pick"
+                {dialog === "preview"
+                  ? t.exerciseDemo
+                  : dialog === "pick"
                   ? customExercise
                     ? t.customExercise
                     : t.chooseExercise
@@ -685,12 +718,39 @@ export function GymApp({ tab }: { tab: Tab }) {
                     : t.edit}
               </Text>
               <Pressable
-                onPress={() => setDialog(null)}
+                onPress={closeDialog}
                 accessibilityLabel={t.cancel}
               >
                 <Text style={s.close}>×</Text>
               </Pressable>
             </View>
+            {dialog === "preview" && preview && (
+              <View>
+                <Text style={s.demoName}>{preview.title}</Text>
+                <AnimatedImage
+                  source={getExerciseAnimation(preview.nameEn)}
+                  style={s.demoImage}
+                  contentFit="contain"
+                  accessibilityLabel={`${t.exerciseDemo}: ${preview.title}`}
+                />
+                <Text style={s.demoCredit}>{t.demoCredit}</Text>
+                <View style={s.artworkLinks}>
+                  <Link
+                    href="https://github.com/bryllim/workout-guide"
+                    style={s.artworkLink}
+                  >
+                    Workout Guide
+                  </Link>
+                  <Text style={s.artworkCredit}> · </Text>
+                  <Link
+                    href="https://creativecommons.org/licenses/by-sa/4.0/"
+                    style={s.artworkLink}
+                  >
+                    {t.artworkLicense}
+                  </Link>
+                </View>
+              </View>
+            )}
             {dialog === "pick" &&
               (customExercise ? (
                 <>
@@ -750,7 +810,12 @@ export function GymApp({ tab }: { tab: Tab }) {
                         onPress={() => addExercise(entry.id)}
                         disabled={busy}
                       >
-                        <ExerciseArtwork nameEn={entry.name_en} size={68} />
+                        <ExerciseArtwork
+                          nameEn={entry.name_en}
+                          size={68}
+                          onPress={() => openPreview(entry.name_en, label(entry))}
+                          accessibilityLabel={`${t.viewExerciseDemo} ${label(entry)}`}
+                        />
                         <View style={s.flex}>
                           <Text style={s.itemName}>{label(entry)}</Text>
                           {entry.equipment_id &&

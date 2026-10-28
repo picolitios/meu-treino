@@ -12,4 +12,5 @@ changes are retained in `SOURCES.json`.
 
 The four-frame GIFs in `../exercise-gifs/` are adaptations of the same
 Workout Guide assets, using frames 1, 2, 3, and 2 with a purple background.
-They remain licensed under CC BY-SA 4.0 and are not displayed in the app yet.
+They remain licensed under CC BY-SA 4.0 and are displayed in the exercise
+demonstration view, with attribution and a license link.
