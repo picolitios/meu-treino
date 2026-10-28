@@ -15,7 +15,7 @@ import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
-import { router } from "expo-router";
+import { Link, router } from "expo-router";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { getLocales } from "expo-localization";
 import type { SQLiteDatabase } from "expo-sqlite";
@@ -43,6 +43,7 @@ import {
 import { translate, type Language } from "../i18n";
 import { s } from "../styles";
 import { colors } from "../theme";
+import { ExerciseArtwork } from "./ExerciseArtwork";
 
 type Tab = "plan" | "gym" | "settings";
 type Dialog = "pick" | "equipment" | "edit" | null;
@@ -383,6 +384,7 @@ export function GymApp({ tab }: { tab: Tab }) {
                     <Text style={s.number}>
                       {String(index + 1).padStart(2, "0")}
                     </Text>
+                    <ExerciseArtwork nameEn={item.name_en} size={54} />
                     <Text style={[s.itemName, s.flex]}>{label(item)}</Text>
                     <Pressable
                       onPress={() => confirmRemove(item)}
@@ -549,6 +551,22 @@ export function GymApp({ tab }: { tab: Tab }) {
               </View>
             </View>
             <Text style={s.offline}>{t.offline}</Text>
+            <Text style={s.artworkCredit}>{t.artworkCredit}</Text>
+            <View style={s.artworkLinks}>
+              <Link
+                href="https://github.com/bryllim/workout-guide"
+                style={s.artworkLink}
+              >
+                Workout Guide
+              </Link>
+              <Text style={s.artworkCredit}> · </Text>
+              <Link
+                href="https://creativecommons.org/licenses/by-sa/4.0/"
+                style={s.artworkLink}
+              >
+                {t.artworkLicense}
+              </Link>
+            </View>
           </ScrollView>
         )}
       </View>
@@ -673,6 +691,7 @@ export function GymApp({ tab }: { tab: Tab }) {
                         onPress={() => addExercise(entry.id)}
                         disabled={busy}
                       >
+                        <ExerciseArtwork nameEn={entry.name_en} size={52} />
                         <View style={s.flex}>
                           <Text style={s.itemName}>{label(entry)}</Text>
                           {entry.equipment_id &&

@@ -188,6 +188,13 @@ export const s = StyleSheet.create({
     elevation: 1,
   },
   exerciseHead: { flexDirection: "row", alignItems: "center", gap: 11 },
+  artworkTile: {
+    backgroundColor: colors.hero,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    overflow: "hidden",
+  },
   number: {
     backgroundColor: colors.tint,
     color: colors.primary,
@@ -257,6 +264,14 @@ export const s = StyleSheet.create({
   meta: { color: colors.muted, fontSize: 11, marginTop: 4 },
   plus: { color: colors.primary, fontSize: 20, fontWeight: "700" },
   noResults: { color: colors.muted, textAlign: "center", paddingVertical: 28 },
+  artworkCredit: { color: colors.muted, textAlign: "center", fontSize: 11 },
+  artworkLinks: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 5,
+  },
+  artworkLink: { color: colors.primary, fontSize: 11, fontWeight: "700" },
   outline: {
     height: 50,
     borderWidth: 1.5,
@@ -353,6 +368,8 @@ export const s = StyleSheet.create({
     borderBottomColor: colors.stroke,
     flexDirection: "row",
     alignItems: "center",
+    gap: 12,
+    paddingVertical: 5,
   },
   available: { color: colors.primary, fontSize: 11, marginTop: 3 },
   cancelButton: { alignItems: "center", padding: 12 },

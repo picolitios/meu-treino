@@ -29,9 +29,13 @@
       "typedRoutes": true
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.picolitios.meutreino",
+      "infoPlist": {}
     },
     "android": {
+      "package": "com.picolitios.meutreino",
+      "versionCode": 1,
       "adaptiveIcon": {
         "backgroundColor": "#28133F",
         "foregroundImage": "./assets/android-icon-foreground.png",
@@ -42,6 +46,17 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "router": {
+        "asyncRoutes": {
+          "web": true
+        }
+      },
+      "eas": {
+        "projectId": "767c23a7-fa56-41f6-9fa6-8a6e0eb30d40"
+      }
+    },
+    "owner": "picolitios"
   }
 }

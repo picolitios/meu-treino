@@ -29,3 +29,23 @@ O catálogo inicial inclui aparelhos comuns de musculação, pesos livres, cabos
 ## Identidade visual
 
 As cores da interface ficam em `src/theme.ts`. Os ícones roxos e o splash estão em `assets/`; para recriá-los no Windows, execute `scripts/generate-brand-assets.ps1` no PowerShell. Os PNGs gerados já estão versionados e são usados diretamente pelos builds Android e iOS.
+
+## Ilustrações dos exercícios
+
+Os exercícios do catálogo têm imagens locais em `assets/exercises/`, mostradas no treino e na busca. Quando a coleção não possui uma pose fiel, aparece um pictograma específico; exercícios personalizados usam um ícone genérico. As poses são ilustrações de identificação, não instruções de execução. As imagens vêm do [Workout Guide](https://github.com/bryllim/workout-guide), de Bryl Lim, com contribuições originais do [Everkinetic](https://github.com/everkinetic/data), sob [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). Os arquivos `LICENSE-ASSETS`, `ATTRIBUTION.md` e `SOURCES.json` em `assets/exercises/` preservam os créditos e a origem de cada imagem utilizada.
+
+## Gerar aplicativo para download
+
+O perfil `preview` em `eas.json` gera um APK Android que funciona sem Expo Go ou servidor de desenvolvimento. Requer uma conta Expo autenticada:
+
+- [Baixar o APK Android 1.0.0](https://expo.dev/artifacts/eas/NPI7lyODyX5fHgkSf4HRqgO3JaJiPAqcKiwg2EYZQUU.apk) (build de teste disponível até 10/11/2026).
+- [Consultar o build na Expo](https://expo.dev/accounts/picolitios/projects/meu-treino/builds/092d2f99-4ce3-4685-96bf-2a18b2548599).
+
+Para gerar um novo link quando o atual expirar:
+
+```bash
+npx eas-cli@latest login
+npx eas-cli@latest build --platform android --profile preview
+```
+
+Após a conclusão, o EAS fornece um link para baixar e instalar o APK. Para iOS, o mesmo perfil pode gerar uma distribuição interna com `--platform ios`; a instalação em iPhone exige conta Apple Developer e registro dos aparelhos. O perfil não publica o app nas lojas.
