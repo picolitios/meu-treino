@@ -9,6 +9,8 @@ App Android e iOS, utilizável sem conta ou conexão, para registrar os equipame
 - O catálogo inicial cobre as famílias comuns de máquinas, pesos livres, cabos, cardio e acessórios. Cada item tem nome em português e inglês. Como academias podem ter aparelhos próprios ou nomes regionais, o usuário pode cadastrar equipamentos ausentes.
 - A busca filtra conforme a digitação, ignora acentos e considera os nomes nos dois idiomas.
 - É possível marcar e desmarcar equipamentos da academia; essa seleção persiste após reiniciar o app.
+- A aba “Catálogo” mostra todos os equipamentos com busca e categorias. A aba “Minha academia” mostra apenas os marcados e oferece edição para consultar a lista completa, marcar novos aparelhos e retirar os que deixaram de existir. A seleção já salva no aparelho é preservada.
+- Na escolha de exercícios para um treino, é possível filtrar os exercícios associados aos equipamentos marcados; a lista completa continua acessível.
 - Cada dia da semana tem um treino editável: nome próprio, lista ordenada de exercícios, séries e repetições por exercício.
 - É possível adicionar exercícios do catálogo, criar um exercício com nome próprio e excluir exercícios de um treino.
 - Os dados do usuário persistem em SQLite local. Exclusões de exercícios do treino não apagam o catálogo.

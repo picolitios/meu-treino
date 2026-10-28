@@ -24,7 +24,7 @@ npx expo-doctor
 
 ## Dados e escopo
 
-O catálogo inicial inclui aparelhos comuns de musculação, pesos livres, cabos, cardio e acessórios, com nomes em português e inglês. Equipamentos e exercícios ausentes podem ser criados no app. Os treinos, os aparelhos marcados e o idioma escolhido ficam somente no dispositivo; não há conta nem sincronização. A [spec do MVP](specs/mvp.md) descreve os critérios de aceitação.
+O catálogo inicial inclui aparelhos comuns de musculação, pesos livres, cabos, cardio e acessórios, com nomes em português e inglês. A aba **Catálogo** mostra todos; **Minha academia** reúne os aparelhos marcados e permite editar a seleção. Ao montar um treino, há um filtro para mostrar apenas exercícios dos aparelhos disponíveis na academia. Equipamentos e exercícios ausentes podem ser criados no app. Os treinos, os aparelhos marcados e o idioma escolhido ficam somente no dispositivo; não há conta nem sincronização. A [spec do MVP](specs/mvp.md) descreve os critérios de aceitação.
 
 ## Identidade visual
 

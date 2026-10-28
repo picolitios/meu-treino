@@ -1,6 +1,6 @@
 import { GymApp } from "../components/GymApp";
 
-// Exibe e edita o inventário de equipamentos da academia.
+// Exibe os aparelhos marcados e permite editar o inventário da academia.
 export default function GymRoute() {
   return <GymApp tab="gym" />;
 }
