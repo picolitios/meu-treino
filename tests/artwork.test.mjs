@@ -33,7 +33,20 @@ test("cada exercício inicial tem ilustração local ou pictograma", () => {
       ),
       `Arquivo ausente: ${slug}.png`,
     );
+    const gif = readFileSync(
+      fileURLToPath(
+        new URL(`../assets/exercise-gifs/${slug}.gif`, import.meta.url),
+      ),
+    );
+    assert.equal(gif.subarray(0, 6).toString(), "GIF89a", `GIF inválido: ${slug}`);
+    assert.equal(gif.readUInt16LE(6), 512, `Largura inesperada: ${slug}`);
+    assert.equal(gif.readUInt16LE(8), 512, `Altura inesperada: ${slug}`);
   }
+  assert.equal(
+    new Set(catalog.map(([, , equipmentEn]) => equipmentEn)).size,
+    catalog.length,
+    "Cada equipamento inicial precisa de uma pose associada",
+  );
   assert.ok(
     existsSync(
       fileURLToPath(

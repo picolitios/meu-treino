@@ -32,7 +32,9 @@ As cores da interface ficam em `src/theme.ts`. Os ícones roxos e o splash estã
 
 ## Ilustrações dos exercícios
 
-Os exercícios do catálogo têm imagens locais em `assets/exercises/`, mostradas no treino e na busca. Quando a coleção não possui uma pose fiel, aparece um pictograma específico; exercícios personalizados usam um ícone genérico. As poses são ilustrações de identificação, não instruções de execução. As imagens vêm do [Workout Guide](https://github.com/bryllim/workout-guide), de Bryl Lim, com contribuições originais do [Everkinetic](https://github.com/everkinetic/data), sob [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). Os arquivos `LICENSE-ASSETS`, `ATTRIBUTION.md` e `SOURCES.json` em `assets/exercises/` preservam os créditos e a origem de cada imagem utilizada.
+Os exercícios do catálogo têm imagens locais de 512 px em `assets/exercises/`, mostradas no treino, na busca e ao lado dos equipamentos correspondentes em “Minha academia”. Quando a coleção não possui uma pose fiel, aparece um pictograma específico; itens personalizados usam um ícone genérico. As poses são ilustrações de identificação, não instruções de execução. As imagens vêm do [Workout Guide](https://github.com/bryllim/workout-guide), de Bryl Lim, com contribuições originais do [Everkinetic](https://github.com/everkinetic/data), sob [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). Os arquivos `LICENSE-ASSETS`, `ATTRIBUTION.md` e `SOURCES.json` em `assets/exercises/` preservam os créditos e a origem de cada imagem utilizada.
+
+Os 67 GIFs em `assets/exercise-gifs/` foram montados com quatro quadros da mesma coleção e estão guardados para uma futura tela de demonstração; o aplicativo ainda não os exibe. Para recriá-los, obtenha o [Workout Guide](https://github.com/bryllim/workout-guide) no commit `aac599224bb9780305239607ef98540b7e0ce389` e execute `npm run artwork:gifs -- <caminho-do-repositório>`. Os GIFs são adaptações sob a mesma licença CC BY-SA 4.0.
 
 ## Gerar aplicativo para download
 

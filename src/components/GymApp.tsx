@@ -43,7 +43,7 @@ import {
 import { translate, type Language } from "../i18n";
 import { s } from "../styles";
 import { colors } from "../theme";
-import { ExerciseArtwork } from "./ExerciseArtwork";
+import { EquipmentArtwork, ExerciseArtwork } from "./ExerciseArtwork";
 
 type Tab = "plan" | "gym" | "settings";
 type Dialog = "pick" | "equipment" | "edit" | null;
@@ -384,7 +384,7 @@ export function GymApp({ tab }: { tab: Tab }) {
                     <Text style={s.number}>
                       {String(index + 1).padStart(2, "0")}
                     </Text>
-                    <ExerciseArtwork nameEn={item.name_en} size={54} />
+                    <ExerciseArtwork nameEn={item.name_en} size={70} />
                     <Text style={[s.itemName, s.flex]}>{label(item)}</Text>
                     <Pressable
                       onPress={() => confirmRemove(item)}
@@ -493,6 +493,11 @@ export function GymApp({ tab }: { tab: Tab }) {
                 >
                   {entry.owned ? <Text style={s.checkText}>✓</Text> : null}
                 </View>
+                <EquipmentArtwork
+                  nameEn={entry.name_en}
+                  custom={Boolean(entry.custom)}
+                  size={64}
+                />
                 <View style={s.flex}>
                   <Text style={s.itemName}>{label(entry)}</Text>
                   <Text style={s.meta}>
@@ -691,7 +696,7 @@ export function GymApp({ tab }: { tab: Tab }) {
                         onPress={() => addExercise(entry.id)}
                         disabled={busy}
                       >
-                        <ExerciseArtwork nameEn={entry.name_en} size={52} />
+                        <ExerciseArtwork nameEn={entry.name_en} size={68} />
                         <View style={s.flex}>
                           <Text style={s.itemName}>{label(entry)}</Text>
                           {entry.equipment_id &&

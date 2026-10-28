@@ -240,7 +240,7 @@ export const s = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
-    minHeight: 65,
+    minHeight: 80,
     borderBottomWidth: 1,
     borderBottomColor: colors.stroke,
     paddingHorizontal: 12,

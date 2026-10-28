@@ -15,6 +15,8 @@ App Android e iOS, utilizável sem conta ou conexão, para registrar os equipame
 - A interface segue o idioma do aparelho (português ou inglês) na primeira abertura e permite alterná-lo dentro do app.
 - A identidade visual usa roxo profundo, violeta e lavanda de modo consistente nas telas, nos estados ativos e nos ícones do aplicativo, preservando legibilidade.
 - Cada exercício inicial mostra uma ilustração local representativa ou um pictograma específico na lista de escolha e no treino, inclusive sem internet. Exercícios criados pelo usuário mostram um símbolo neutro. Créditos e licença das ilustrações ficam acessíveis no app e no repositório.
+- A lista “Minha academia” mostra a ilustração do exercício associado a cada equipamento inicial. A arte usa tamanho suficiente para identificar a pose em uma tela de celular; equipamentos personalizados usam um símbolo neutro.
+- Os exercícios com ilustração possuem GIFs locais derivados dos quadros da mesma coleção licenciada. Os GIFs ficam armazenados para uma futura tela de demonstração, sem reprodução no MVP atual.
 - O projeto oferece um perfil de distribuição interna para gerar APK Android instalável sem Expo Go ou servidor de desenvolvimento. O mesmo perfil prepara builds iOS internos quando houver conta Apple Developer e dispositivos registrados.
 
 ## Fora do MVP

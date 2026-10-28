@@ -1,8 +1,14 @@
 import type { ComponentProps } from "react";
 import { Image, View } from "react-native";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { catalog } from "../catalog";
 import { s } from "../styles";
 import { colors } from "../theme";
+
+// Relaciona cada aparelho inicial à pose do exercício cadastrado com ele.
+const exerciseByEquipment = new Map(
+  catalog.map(([, , equipmentEn, , exerciseEn]) => [equipmentEn, exerciseEn]),
+);
 
 // Associa cada exercício inicial a uma pose local representativa do movimento.
 const artworkByExercise: Record<string, number> = {
@@ -113,7 +119,7 @@ export function ExerciseArtwork({
       {source ? (
         <Image
           source={source}
-          style={{ width: size - 6, height: size - 6 }}
+          style={{ width: size, height: size }}
           resizeMode="contain"
           accessibilityIgnoresInvertColors
         />
@@ -125,5 +131,23 @@ export function ExerciseArtwork({
         />
       )}
     </View>
+  );
+}
+
+// Mostra a pose correspondente ao aparelho; itens criados pelo usuário usam um símbolo neutro.
+export function EquipmentArtwork({
+  nameEn,
+  custom,
+  size = 64,
+}: {
+  nameEn: string;
+  custom: boolean;
+  size?: number;
+}) {
+  return (
+    <ExerciseArtwork
+      nameEn={custom ? "" : (exerciseByEquipment.get(nameEn) ?? "")}
+      size={size}
+    />
   );
 }
